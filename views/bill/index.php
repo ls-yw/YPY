@@ -35,8 +35,7 @@ $(function(){
 					        if(res.code == 0){
 					        	//登入成功的提示与跳转
 						        layer.msg(res.msg, {
-						          offset: '15px'
-						          ,icon: 1
+						          icon: 1
 						          ,time: 1000
 						        }, function(){
 						        	$('#blockquote-msg').html('等待财务大人('+res.data.realName+')的审核，<a href="javascript:;" class="red cancelCwdr" data-touid="'+res.data.toUid+'">取消申请</a>？');
@@ -72,8 +71,7 @@ $(function(){
 				        	layer.close(index);
 				        	//登入成功的提示与跳转
 					        layer.msg(res.msg, {
-					          offset: '15px'
-					          ,icon: 1
+					          icon: 1
 					        });
 					        $('#blockquote-msg').hide();
 					    }else{
@@ -107,8 +105,7 @@ $(function(){
 				        if(res.code == 0){
 				        	//登入成功的提示与跳转
 					        layer.msg(res.msg, {
-					          offset: '15px'
-					          ,icon: 1
+					          icon: 1
 					        });
 					        $('#blockquote-msg').hide();
 					    }else{
@@ -142,8 +139,7 @@ $(function(){
 				        if(res.code == 0){
 				        	//登入成功的提示与跳转
 					        layer.msg(res.msg, {
-					          offset: '15px'
-					          ,icon: 1
+					          icon: 1
 					        });
 					        $('#blockquote-msg').hide();
 					    }else{

@@ -73,8 +73,7 @@ $(function(){
 				        $.cookie(res.data.cookie.name, res.data.cookie.value, { expires: 360, path: '/' });
 			        	//登入成功的提示与跳转
 				        layer.msg('登入成功', {
-				          offset: '15px'
-				          ,icon: 1
+				          icon: 1
 				          ,time: 1000
 				        }, function(){
 				          location.href = res.data.url;

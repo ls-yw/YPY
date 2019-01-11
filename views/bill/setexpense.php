@@ -172,8 +172,7 @@ $(function(){
 				        if(res.code == 0){
 				        	//登入成功的提示与跳转
 					        layer.msg(res.msg, {
-					          offset: '15px'
-					          ,icon: 1
+					          icon: 1
 					          ,time: 2000
 					        }, function(){
 					          location.href = "<?=Url::to(['bill/index'])?>";
