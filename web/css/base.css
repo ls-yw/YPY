@@ -1,0 +1,7 @@
+@CHARSET "UTF-8";
+.red{color:#FF5722}
+.green{color:green;}
+.gray{color:gray;}
+.bg-white{background:#fff !important;}
+.layui-upload-img{cursor:pointer;}
+.upload-img-box .x-icon{position:absolute;color:red;cursor:pointer;right: 10px;}
