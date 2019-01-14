@@ -16,11 +16,12 @@ $(function(){
 		  var flow = layui.flow;
 
 		  $('#LAY_app').on('click', '.addCwdr', function(){
-			  layer.prompt({title: '添加财务大人的手机号码'}, function(value, index){
+			  var index = layer.prompt({title: '添加财务大人的手机号码'}, function(value, index){
 				  	if(value.length != 11){
 				  		layer.msg('请填写正确的手机号码', {icon:2, time:2000});
 				  		return false;
 					 }
+				  	var loadObj = layer.load(1, {shade:0.3});
 				  	$.ajax({
 						url:"<?=Url::to(["user/addrelation"])?>",
 						data:{'mobile':value,'_csrf':'<?=Yii::$app->request->csrfToken?>'},
@@ -33,13 +34,13 @@ $(function(){
 						success:function(res){
 							//请求成功后，写入 access_token
 					        if(res.code == 0){
+					        	layer.close(index);
 					        	//登入成功的提示与跳转
 						        layer.msg(res.msg, {
 						          icon: 1
 						          ,time: 1000
 						        }, function(){
 						        	$('#blockquote-msg').html('等待财务大人('+res.data.realName+')的审核，<a href="javascript:;" class="red cancelCwdr" data-touid="'+res.data.toUid+'">取消申请</a>？');
-						          alert(res.data);
 						        });
 						    }else{
 						    	layer.msg(res.msg, {icon: 2});
@@ -47,6 +48,7 @@ $(function(){
 							}
 						},
 						complete:function(){
+							layer.close(loadObj);
 						}
 					});
 			      });
@@ -55,6 +57,7 @@ $(function(){
 		$('#LAY_app').on('click', '.cancelCwdr', function(){
 			var obj = $(this);
 			layer.confirm('确定取消申请？', function(index){
+				var loadObj = layer.load(1, {shade:0.3});
 			  //do something
 			  $.ajax({
 					url:"<?=Url::to(["user/cancelrelation"])?>",
@@ -80,6 +83,7 @@ $(function(){
 						}
 					},
 					complete:function(){
+						layer.close(loadObj);
 					}
 				});
 			});
@@ -89,6 +93,7 @@ $(function(){
 		$('#LAY_app').on('click', '.okBao', function(){
 			var obj = $(this);
 			layer.confirm('确定<span class="green">同意</span>申请？', function(index){
+				var loadObj = layer.load(1, {shade:0.3});
 			  //do something
 			  $.ajax({
 					url:"<?=Url::to(["user/exrelation"])?>",
@@ -114,6 +119,7 @@ $(function(){
 						}
 					},
 					complete:function(){
+						layer.close(loadObj);
 					}
 				});
 			});
@@ -123,6 +129,7 @@ $(function(){
 		$('#LAY_app').on('click', '.noBao', function(){
 			var obj = $(this);
 			layer.confirm('确定<span class="red">拒绝</span>申请？', function(index){
+				var loadObj = layer.load(1, {shade:0.3});
 			  //do something
 			  $.ajax({
 					url:"<?=Url::to(["user/exrelation"])?>",
@@ -148,6 +155,7 @@ $(function(){
 						}
 					},
 					complete:function(){
+						layer.close(loadObj);
 					}
 				});
 			});
@@ -277,6 +285,7 @@ $(function(){
 });
 function changeStatus(id, status)
 {
+	var loadObj = layer.load(1, {shade:0.3});
 	$.ajax({
 		url:"<?=Url::to(["bill/changeexpense"])?>",
 		data:{'id':id,'status':status,'_csrf':'<?=Yii::$app->request->csrfToken?>'},
@@ -294,11 +303,15 @@ function changeStatus(id, status)
 		    	layer.msg(res.msg, {icon: 2});
 		    	return false;
 			}
+		},
+		complete:function(){
+			layer.close(loadObj);
 		}
 	});
 }
 function showImg(url){
-	var img_infor = "<img src='" + url + "' width />";
+	
+	var img_infor = "<img src='" + url + "' width='100%' />";
 	layer.open({    
         type: 1, 
         closeBtn: 1,
@@ -306,7 +319,6 @@ function showImg(url){
         title: false, //不显示标题
        	//skin: 'layui-layer-nobg', //没有背景色
         shadeClose: true,
-        area:['auto','auto'],    
         //area: [img.width + 'px', img.height+'px'],    
         content: img_infor //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响    
     	});    

@@ -58,6 +58,7 @@ $(function(){
 
 	  //提交
 	  form.on('submit(LAY-user-login-submit)', function(obj){
+		  var loadObj = layer.load(1, {shade:0.3});
 		  $.ajax({
 				url:"<?=Url::to(["login/index"])?>",
 				data:obj.field,
@@ -84,6 +85,7 @@ $(function(){
 					}
 				},
 				complete:function(){
+					layer.close(loadObj);
 				}
 			});
 	    

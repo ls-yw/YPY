@@ -68,6 +68,8 @@ $(function(){
 		      return layer.msg('两次密码输入不一致');
 		    }
 
+		    var loadObj = layer.load(1, {shade:0.3});
+
 		    $.ajax({
 				url:"<?=Url::to(["login/register"])?>",
 				data:obj.field,
@@ -93,6 +95,7 @@ $(function(){
 					}
 				},
 				complete:function(){
+					layer.close(loadObj);
 				}
 			});
 		    

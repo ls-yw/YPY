@@ -158,6 +158,7 @@ $(function(){
 		  
 		  /* 监听提交 */
 		  form.on('submit(component-form-demo1)', function(obj){
+			  var loadObj = layer.load(1, {shade:0.3});
 			  $.ajax({
 					url:"<?=Url::to(["bill/saveexpense"])?>",
 					data:obj.field,
@@ -183,6 +184,7 @@ $(function(){
 						}
 					},
 					complete:function(){
+						layer.close(loadObj);
 					}
 				});
 		    return false;
