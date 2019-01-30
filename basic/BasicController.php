@@ -49,23 +49,31 @@ class BasicController extends Controller
             $filters = explode('|', $filters);
             if (is_array($value)){
                 foreach ($value as &$val){
-                    $val = $this->_doFilterParam($val, $filters);
+                    foreach ($filters as $v){
+                        $val = $this->_doFilterParam($val, $v);
+                    }
                 }
             }else{
-                $value = $this->_doFilterParam($value, $filters);
+                foreach ($filters as $v){
+                    $value = $this->_doFilterParam($value, $v);
+                }
             }
         }
         return $value;
     }
     
-    private function _doFilterParam(string $value, array $filters)
+    private function _doFilterParam(string $value, string $filters)
     {
+        $value = trim($value);
         switch ($filters){
-            case 'trim':
-                $value = trim($value);
-                break;
             case 'intval':
                 $value = intval($value);
+                break;
+            case 'string':
+                $value = strip_tags($value);
+                break;
+            case 'int':
+                $value = (int)preg_replace('/(\D)/i', '', $value);
                 break;
         }
         return $value;
