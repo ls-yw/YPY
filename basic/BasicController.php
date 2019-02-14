@@ -3,12 +3,14 @@ namespace app\basic;
 
 use yii\web\Controller;
 use app\models\User;
+use app\logics\ConfigLogic;
 
 class BasicController extends Controller
 {
     
     protected $token;
     protected $_uid = null;
+    protected $sytemConfig = [];
     
     public function init()
     {
@@ -16,6 +18,7 @@ class BasicController extends Controller
         $this->token = \Yii::$app->request->cookies->has('token') ? \Yii::$app->request->cookies->get('token') : $this->decryptCookie('token', $this->getParam('token'));
         \Yii::$app->user->switchIdentity(User::findIdentityByAccessToken($this->token), 0);
         $this->_uid = !\Yii::$app->user->isGuest ? \Yii::$app->user->identity->id : null;
+        $this->sytemConfig = (new ConfigLogic())->getConfig('system');
     }
     
     public function ajaxReturn($code, $msg, $data = NULL, $other=NULL)

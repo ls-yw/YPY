@@ -1,8 +1,6 @@
 <?php
 namespace app\controllers;
 
-use Upload\File;
-use app\library\Dir;
 use app\basic\BasicController;
 use woodlsy\upload\Upload;
 
@@ -12,15 +10,16 @@ class UploadController extends BasicController
     
     public function actionImg() {
         try {
-            $path = \Yii::$app->basePath.'/web/upload/'.date('Ymd');
-            Dir::directory($path);
+            if(!isset($this->sytemConfig['imgHost']))return $this->ajaxReturn(2, '图片地址未配置');
+            $serverUrl = $this->sytemConfig['imgHost'].'/upload/img?project='.APP_NAME;
             
-            $data = (new Upload())->setFieldName('file')->setMaxSize('1M')->setUploadPath($path)->upload();
-            return $this->ajaxReturn(0, '上传成功', '/upload/'.date('Ymd').'/'.$data['name']);
+            $data = (new Upload())->setMaxSize('1M')->setServerUrl($serverUrl)->upload();
+            return $this->ajaxReturn(0, '上传成功', $this->sytemConfig['imgHost'].'/'.$data['url']);
         } catch (\Exception $e) {
             // Fail!
             $errors = $e->getMessage();
-            return $this->ajaxReturn(1, '图片上传失败');
+            \Yii::warning($errors);
+            return $this->ajaxReturn(101, '图片上传失败');
         }
     }
 }
