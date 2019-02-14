@@ -1,58 +1,78 @@
 {
-  "name" : "ypy",
-  "description" : "Yii 2 Basic Project Template",
-  "require" : {
-    "php" : ">=5.4.0",
-    "yiisoft/yii2" : "~2.0.14",
-    "yiisoft/yii2-bootstrap" : "~2.0.0",
-    "yiisoft/yii2-swiftmailer" : "~2.0.0",
-    "yiisoft/yii2-redis" : "^2.0",
-    "woodlsy/upload": "^0.1.0"
-  },
-  "repositories" : [ {
-    "type" : "composer",
-    "url" : "https://asset-packagist.org"
-  } ],
-  "require-dev" : {
-    "yiisoft/yii2-debug" : "~2.0.0",
-    "yiisoft/yii2-gii" : "~2.0.0",
-    "yiisoft/yii2-faker" : "~2.0.0",
-    "codeception/base" : "^2.2.3",
-    "codeception/verify" : "~0.3.1",
-    "codeception/specify" : "~0.4.3"
-  },
-  "license" : "BSD-3-Clause",
-  "keywords" : [ "yii2", "framework", "basic", "project template" ],
-  "extra" : {
-    "yii\\composer\\Installer::postCreateProject" : {
-      "setPermission" : [ {
-        "runtime" : "0777",
-        "web/assets" : "0777",
-        "yii" : "0755"
-      } ]
+    "name": "ypy",
+    "description": "Yii 2 Basic Project Template",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "~2.0.14",
+        "yiisoft/yii2-bootstrap": "~2.0.0",
+        "yiisoft/yii2-swiftmailer": "~2.0.0",
+        "yiisoft/yii2-redis": "^2.0",
+        "woodlsy/upload": "*"
     },
-    "yii\\composer\\Installer::postInstall" : {
-      "generateCookieValidationKey" : [ "config/web.php" ]
-    }
-  },
-  "minimum-stability" : "stable",
-  "type" : "project",
-  "scripts" : {
-    "post-install-cmd" : [ "yii\\composer\\Installer::postInstall" ],
-    "post-create-project-cmd" : [ "yii\\composer\\Installer::postCreateProject", "yii\\composer\\Installer::postInstall" ]
-  },
-  "support" : {
-    "issues" : "https://github.com/yiisoft/yii2/issues?state=open",
-    "forum" : "http://www.yiiframework.com/forum/",
-    "wiki" : "http://www.yiiframework.com/wiki/",
-    "irc" : "irc://irc.freenode.net/yii",
-    "source" : "https://github.com/yiisoft/yii2"
-  },
-  "config" : {
-    "process-timeout" : 1800,
-    "fxp-asset" : {
-      "enabled" : false
-    }
-  },
-  "homepage" : "http://www.yiiframework.com/"
+    "repositories": {
+        "0": {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        },
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.0.0",
+        "yiisoft/yii2-gii": "~2.0.0",
+        "yiisoft/yii2-faker": "~2.0.0",
+        "codeception/base": "^2.2.3",
+        "codeception/verify": "~0.3.1",
+        "codeception/specify": "~0.4.3"
+    },
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "yii2",
+        "framework",
+        "basic",
+        "project template"
+    ],
+    "extra": {
+        "yii\\composer\\Installer::postCreateProject": {
+            "setPermission": [
+                {
+                    "runtime": "0777",
+                    "web/assets": "0777",
+                    "yii": "0755"
+                }
+            ]
+        },
+        "yii\\composer\\Installer::postInstall": {
+            "generateCookieValidationKey": [
+                "config/web.php"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "type": "project",
+    "scripts": {
+        "post-install-cmd": [
+            "yii\\composer\\Installer::postInstall"
+        ],
+        "post-create-project-cmd": [
+            "yii\\composer\\Installer::postCreateProject",
+            "yii\\composer\\Installer::postInstall"
+        ]
+    },
+    "support": {
+        "issues": "https://github.com/yiisoft/yii2/issues?state=open",
+        "forum": "http://www.yiiframework.com/forum/",
+        "wiki": "http://www.yiiframework.com/wiki/",
+        "irc": "irc://irc.freenode.net/yii",
+        "source": "https://github.com/yiisoft/yii2"
+    },
+    "config": {
+        "process-timeout": 1800,
+        "fxp-asset": {
+            "enabled": false
+        }
+    },
+    "homepage": "http://www.yiiframework.com/"
 }
