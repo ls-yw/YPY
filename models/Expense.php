@@ -57,6 +57,7 @@ class Expense extends \yii\db\ActiveRecord
             [['at_date', 'create_time', 'update_time'], 'safe'],
             [['title'], 'string', 'max' => 100],
             [['content'], 'string', 'max' => 500],
+            [['at_type'], 'string'],
         ];
     }
 
@@ -74,6 +75,7 @@ class Expense extends \yii\db\ActiveRecord
             'content' => '报销内容',
             'deleted' => '删除状态 0正常 1删除',
             'price' => '报销金额',
+            'at_type' => 'at_type',
             'at_date' => '费用日期',
             'at_status' => '状态 1 待审核 2待打款 3待确认 4已完成 5已取消 6已拒绝',
             'create_time' => '创建时间',

@@ -10,7 +10,6 @@ class BillLogic extends BasicLogic {
     public function saveExpense($data)
     {
         $expenseModel = isset($data['Expense']['id']) && !empty($data['Expense']['id']) ? Expense::findOne($data['Expense']['id']) : new Expense();
-        
         if($expenseModel->load($data) && $expenseModel->save()){
             return $expenseModel;
         }
@@ -144,12 +143,22 @@ class BillLogic extends BasicLogic {
     public function checkPowerChangeExpense($uid, $expense, $status)
     {
         if($uid == $expense->uid){  //报销者
-            if($expense->at_status == 1 && in_array($status, [5]))return true;
-            if($expense->at_status == 2 && in_array($status, [5]))return true;
-            if($expense->at_status == 3 && in_array($status, [4, 2]))return true;
+            
+            if($expense->at_type == 'income'){
+                if($expense->at_status == 2 && in_array($status, [3,5]))return true;
+                if($expense->at_status == 3 && in_array($status, [5]))return true;
+            }else{
+                if($expense->at_status == 1 && in_array($status, [5]))return true;
+                if($expense->at_status == 2 && in_array($status, [5]))return true;
+                if($expense->at_status == 3 && in_array($status, [4, 2]))return true;
+            }
         }else{  //财务大人
-            if($expense->at_status == 1 && in_array($status, [2,6]))return true;
-            if($expense->at_status == 2 && in_array($status, [3,6]))return true;
+            if($expense->at_type == 'income'){
+                if($expense->at_status == 3 && in_array($status, [4, 2]))return true;
+            }else{
+                if($expense->at_status == 1 && in_array($status, [2,6]))return true;
+                if($expense->at_status == 2 && in_array($status, [3,6]))return true;
+            }
         }
         return false;
     }

@@ -5,3 +5,14 @@
 .bg-white{background:#fff !important;}
 .layui-upload-img{cursor:pointer;}
 .upload-img-box .x-icon{position:absolute;color:red;cursor:pointer;right: 10px;}
+.list-status-2{background-color:#f0ad4e !important}
+.list-status-2 .layadmin-text,.list-status-2 .layui-card-header{color:#fff !important;}
+.list-status-3{background-color:#5bc0de !important}
+.list-status-3 .layadmin-text,.list-status-3 .layui-card-header{color:#fff !important;}
+.list-status-4{background-color:#5cb85c !important}
+.list-status-4 .layadmin-text,.list-status-4 .layui-card-header{color:#fff !important;}
+.list-status-5{background-color:#c7c6c6 !important;}
+.list-status-5 .layadmin-text,.list-status-5 .layui-card-header{color:#fff !important;}
+.list-status-6{background-color:#777 !important;}
+.list-status-6 .layadmin-text,.list-status-6 .layui-card-header{color:#fff !important;}
+.type-income{border:1px solid #337ab7;}

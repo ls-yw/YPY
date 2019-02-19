@@ -177,11 +177,11 @@ $(function(){
 					success:function(res){
 						//假设你的列表返回在data集合中
 				        layui.each(res.data, function(index, item){
-							var html = '<div class="layui-card"><div class="layui-card-header"> ';
+							var html = '<div class="layui-card list-status-'+item.at_status+' type-'+item.at_type+'"><div class="layui-card-header"> ';
 							if(item.role == 'expenser'){
-								html += '您向'+item.to_realname+'发起申请报销：'+item.title;
+								html += '您向'+item.to_realname+'发起申请'+(item.at_type == 'income' ? '上缴' : '报销')+'：'+item.title;
 							}else{
-								html += item.realname+'向您发起申请报销：'+item.title;
+								html += item.realname+'向您发起申请'+(item.at_type == 'income' ? '上缴' : '报销')+'：'+item.title;
 							}
 
 							var htmlHanld = '';
@@ -190,10 +190,18 @@ $(function(){
 								htmlHanld += (item.role == 'expenser') ? '<button class="layui-btn layui-btn-sm expense-edit">修改</button><button class="layui-btn layui-btn-sm layui-btn-danger expense-cancel">取消</button>' : '<button class="layui-btn layui-btn-sm expense-agree">同意</button><button class="layui-btn layui-btn-sm layui-btn-danger expense-refuse">拒绝</button>';
 							}else if(item.at_status == 2){
 								html +='<i class="layui-icon" style="font-size:14px;">待打款</i>';
-								htmlHanld += (item.role == 'expenser') ? '<button class="layui-btn layui-btn-sm layui-btn-danger expense-cancel">取消</button>' : '<button class="layui-btn layui-btn-sm expense-pay">已打款</button><button class="layui-btn layui-btn-sm layui-btn-danger expense-refuse">拒绝</button>';
+								if(item.at_type == 'income'){
+									htmlHanld += (item.role == 'expenser') ? '<button class="layui-btn layui-btn-sm expense-pay">已打款</button><button class="layui-btn layui-btn-sm layui-btn-danger expense-cancel">取消</button>' : '';
+								}else{
+									htmlHanld += (item.role == 'expenser') ? '<button class="layui-btn layui-btn-sm layui-btn-danger expense-cancel">取消</button>' : '<button class="layui-btn layui-btn-sm expense-pay">已打款</button><button class="layui-btn layui-btn-sm layui-btn-danger expense-refuse">拒绝</button>';
+								}
 							}else if(item.at_status == 3){
 								html +='<i class="layui-icon" style="font-size:14px;">待确认</i>';
-								htmlHanld += (item.role == 'expenser') ? '<button class="layui-btn layui-btn-sm expense-done">收到款</button><button class="layui-btn layui-btn-sm layui-btn-warm expense-nopay">未打款</button>' : '';
+								if(item.at_type == 'income'){
+									htmlHanld += (item.role == 'expenser') ? '' : '<button class="layui-btn layui-btn-sm expense-done">收到款</button><button class="layui-btn layui-btn-sm layui-btn-warm expense-nopay">未打款</button>';
+								}else{
+									htmlHanld += (item.role == 'expenser') ? '<button class="layui-btn layui-btn-sm expense-done">收到款</button><button class="layui-btn layui-btn-sm layui-btn-warm expense-nopay">未打款</button>' : '';
+								}
 							}else if(item.at_status == 4){
 								html +='<i class="layui-icon" style="font-size:14px;">已完成</i>';
 							}else if(item.at_status == 5){

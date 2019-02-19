@@ -100,9 +100,15 @@ use yii\helpers\Url;
           
           
           <li data-name="a" data-jump="" class="layui-nav-item layui-nav-itemed">
-            <a href="<?=Url::to(['bill/addexpense'])?>" lay-tips="shouquan" lay-direction="2">
+            <a href="<?=Url::to(['bill/addexpense'])?>?type=expense" lay-tips="shouquan" lay-direction="2">
               <i class="layui-icon layui-icon-add-circle-fine"></i>
               <cite>发起报销</cite>
+            </a>
+          </li>
+          <li data-name="a" data-jump="" class="layui-nav-item layui-nav-itemed">
+            <a href="<?=Url::to(['bill/addexpense'])?>?type=income" lay-tips="shouquan" lay-direction="2">
+              <i class="layui-icon layui-icon-add-circle-fine"></i>
+              <cite>发起上缴</cite>
             </a>
           </li>
         

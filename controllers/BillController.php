@@ -86,12 +86,16 @@ class BillController extends BasicController
     
     public function actionAddexpense()
     {
+        $type = $this->getParam('type', 'string', '');
         $userLogic = new UserLogic();
         $financer = $userLogic->getFinancer($this->_uid);
         
         $assign = [];
         $assign['financer'] = $financer;
-        return $this->render('setexpense', $assign);
+        $assign['type']     = $type;
+        
+        $viewName = $type == 'income' ? 'setincome' : 'setexpense';
+        return $this->render($viewName, $assign);
     }
     
     public function actionEditexpense()
@@ -106,15 +110,19 @@ class BillController extends BasicController
         $billLogic = new BillLogic();
         $expense = $billLogic->getExpenseById($id);
         if(!$expense)$error = '数据不存在';
-        
         $expenseImg = $billLogic->getExpenseImgs($expense->id);
+        
+        $type = $expense->at_type;
     
         $assign = [];
         $assign['financer']    = $financer;
         $assign['error']       = $error;
         $assign['expense']     = $expense;
         $assign['expenseImg']  = $expenseImg;
-        return $this->render('setexpense', $assign);
+        $assign['type']        = $type;
+        
+        $viewName = $type == 'income' ? 'setincome' : 'setexpense';
+        return $this->render($viewName, $assign);
     }
     
     public function actionSaveexpense()
@@ -130,8 +138,10 @@ class BillController extends BasicController
             $data['Expense']['content'] = $this->postParam('content', 'string');
             $data['Expense']['at_date'] = $this->postParam('at_date', 'string');
             $data['Expense']['price']   = $this->postParam('price');
+            $data['Expense']['at_type'] = $this->postParam('type', 'string', 'expense');
             
             if(!empty($id))$data['Expense']['id'] = $id;
+            if(empty($id) && $data['Expense']['at_type'] = 'income')$data['Expense']['at_status'] = 2;
             
             $billLogic = new BillLogic();
             $expense = $billLogic->saveExpense($data);

@@ -5,7 +5,7 @@ use yii\helpers\Url;
 <?php if(!empty($error)):?><blockquote class="layui-elem-quote bg-white red" id="blockquote-msg"><?=$error?></blockquote>
 <?php else:?>
   <div class="layui-card">
-    <div class="layui-card-header">发起报销</div>
+    <div class="layui-card-header">发起上缴</div>
     <div class="layui-card-body" style="padding: 15px;">
       <form class="layui-form" action="" lay-filter="component-form-group">
         <div class="layui-form-item">
@@ -31,22 +31,22 @@ use yii\helpers\Url;
         </div>
         
         <div class="layui-form-item">
-          <label class="layui-form-label">报销标题</label>
+          <label class="layui-form-label">上缴标题</label>
           <div class="layui-input-block">
             <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
           </div>
         </div>
         
         <div class="layui-form-item layui-form-text">
-          <label class="layui-form-label">报销内容</label>
+          <label class="layui-form-label">上缴内容</label>
           <div class="layui-input-block">
-            <textarea name="content" placeholder="请输入报销内容" class="layui-textarea"></textarea>
+            <textarea name="content" placeholder="请输入上缴内容" class="layui-textarea"></textarea>
           </div>
         </div>  
         
         <div class="layui-form-item">
           <div class="layui-inline">
-            <label class="layui-form-label">费用日期</label>
+            <label class="layui-form-label">上缴日期</label>
             <div class="layui-input-inline">
               <input type="text" name="at_date" id="LAY-component-form-group-date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
             </div>
@@ -55,7 +55,7 @@ use yii\helpers\Url;
         
         <div class="layui-form-item">
           <div class="layui-inline">
-            <label class="layui-form-label">报销金额</label>
+            <label class="layui-form-label">上缴金额</label>
             <div class="layui-input-inline" style="width: 100px;">
               <input type="text" name="price" placeholder="￥" lay-verify="price" autocomplete="off" class="layui-input">
             </div>
@@ -65,7 +65,7 @@ use yii\helpers\Url;
         
         <div class="layui-form-item">
           <div class="layui-inline upload-img-box">
-            <label class="layui-form-label">报销明细</label>
+            <label class="layui-form-label">上缴证明</label>
             <?php if(!empty($expenseImg['exp'])):foreach ($expenseImg['exp'] as $val):?>
             <div class="layui-input-inline" style="width: 100px;">
             	<img src="<?=$val->img_url?>" width="90">
@@ -161,7 +161,7 @@ $(function(){
 		  form.on('submit(component-form-demo1)', function(obj){
 			  var loadObj = layer.load(1, {shade:0.3});
 			  $.ajax({
-					url:"<?=Url::to(["bill/saveexpense"])?>?type=expense",
+					url:"<?=Url::to(["bill/saveexpense"])?>?type=income",
 					data:obj.field,
 					dataType:'json',
 					type:'POST',
