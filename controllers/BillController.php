@@ -55,7 +55,7 @@ class BillController extends BasicController
             }
         }
         
-        return $this->render('index', ['blockquote'=>$blockquote]);
+        return $this->render('index', ['blockquote'=>$blockquote, 'user'=>\Yii::$app->user->identity]);
     }
     
     public function actionExpense()
@@ -141,7 +141,7 @@ class BillController extends BasicController
             $data['Expense']['at_type'] = $this->postParam('type', 'string', 'expense');
             
             if(!empty($id))$data['Expense']['id'] = $id;
-            if(empty($id) && $data['Expense']['at_type'] = 'income')$data['Expense']['at_status'] = 2;
+            if(empty($id) && $data['Expense']['at_type'] == 'income')$data['Expense']['at_status'] = 2;
             
             $billLogic = new BillLogic();
             $expense = $billLogic->saveExpense($data);
