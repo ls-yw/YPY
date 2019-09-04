@@ -1,0 +1,50 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "36e7f47995225e1190e8c265e4f5359e",
+    "packages": [
+        {
+            "name": "woodlsy/upload",
+            "version": "0.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/woodlsy/upload.git",
+                "reference": "72c9c1da25c0ec76cbf60bd27716b4cb5d046155"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/woodlsy/upload/zipball/72c9c1da25c0ec76cbf60bd27716b4cb5d046155",
+                "reference": "72c9c1da25c0ec76cbf60bd27716b4cb5d046155",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "woodlsy\\upload\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "php upload class",
+            "time": "2019-07-30T02:26:47+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
