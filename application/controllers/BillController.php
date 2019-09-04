@@ -29,6 +29,10 @@ class BillController extends BasicController
             $atDate  = $this->post('at_date');
             $price   = $this->post('price');
             $imgs    = $this->post('imgs');
+            $type    = $this->post('type', 'string', 'expense');
+            if ('income' !== $type) {
+                $type = 'expense';
+            }
 
             if (empty($toUid)) {
                 throw new YpyException('请选择财务大人');
@@ -58,7 +62,7 @@ class BillController extends BasicController
                 'title'   => $title,
                 'content' => $content,
                 'price'   => $price,
-                'at_type' => 'expense',
+                'at_type' => $type,
                 'at_date' => $atDate,
                 'imgs'    => $imgs,
             ];
