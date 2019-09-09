@@ -1,4 +1,5 @@
 <?php
+
 namespace logic;
 
 use Basic\BasicLogic;
@@ -6,6 +7,8 @@ use library\Helper;
 use library\Redis;
 use library\YpyException;
 use models\User;
+use models\UserBalance;
+use models\UserBalanceRecharge;
 use models\UserRelation;
 
 class UserLogic extends BasicLogic
@@ -68,6 +71,69 @@ class UserLogic extends BasicLogic
             }
         }
         return $arr;
+    }
+
+    /**
+     * 获取余额
+     *
+     * @author yls
+     * @param int $uid
+     * @return string
+     */
+    public function getBalance(int $uid)
+    {
+        $balance = (new UserBalance())->getSum(['uid' => $uid], ['balance']);
+        return Helper::moneyToShow((int) $balance['balance_sum']);
+    }
+
+    /**
+     * 充值申请
+     *
+     * @author yls
+     * @param int $uid
+     * @param int $amount
+     * @return bool|int
+     * @throws YpyException
+     */
+    public function recharge(int $uid, int $amount)
+    {
+        // 获取充值对象
+        $users = (new UserRelation())->getAll(['to_uid' => $uid]);
+        if (count($users) != 1) {
+            throw new YpyException('暂不支持多个对象的充值');
+        }
+        $toUid = current($users)['uid'];
+        $data  = [
+            'uid'             => $uid,
+            'to_uid'          => $toUid,
+            'amount'          => $amount,
+            'recharge_status' => 1,
+        ];
+        return (new UserBalanceRecharge())->insertData($data);
+    }
+
+    /**
+     * 获取充值列表
+     *
+     * @author yls
+     * @param int $uid
+     * @param int $page
+     * @return array|bool
+     * @throws \Exception
+     */
+    public function getRechargeList(int $uid, int $page)
+    {
+        $offset = ($page - 1) * 10;
+        $list   = (new UserBalanceRecharge())->getList(['uid' => ['or', 'uid' => $uid, 'to_uid' => $uid]], 'id desc', $offset, 10);
+        if (!empty($list)) {
+            $users = $this->getPairs();
+            foreach ($list as &$val) {
+                $val['uid_name']    = $users[$val['uid']] ?? '';
+                $val['to_uid_name'] = $users[$val['to_uid']] ?? '';
+                $val['amount']      = Helper::moneyToShow($val['amount']);
+            }
+        }
+        return $list;
     }
 
 }

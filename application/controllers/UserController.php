@@ -35,4 +35,66 @@ class UserController extends BasicController
             return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
         }
     }
+
+    /**
+     * 获取账户余额
+     *
+     * @author yls
+     * @return \Phalcon\Http\Response
+     */
+    public function infoAction()
+    {
+        try {
+            $balance = (new UserLogic())->getBalance((int) $this->uid);
+            $user['balance'] = $balance;
+
+            return $this->ajaxReturn(ErrorCode::SUCCESS, "ok", $user);
+        } catch (YpyException $e) {
+            return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
+        } catch (Exception $e) {
+            Log::write($this->controllerName.'|'.$this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
+        }
+    }
+
+    /**
+     * 充值申请
+     *
+     * @author yls
+     * @return \Phalcon\Http\Response
+     */
+    public function rechargeAction()
+    {
+        try {
+
+            $amount = (float)$this->post('amount');
+            $amount = $amount * 100;
+            if (empty($amount)) {
+                throw new YpyException('充值金额不能为0');
+            }
+            $res = (new UserLogic())->recharge($this->uid, $amount);
+            if (!$res) {
+                throw new YpyException('充值失败');
+            }
+            return $this->ajaxReturn(ErrorCode::SUCCESS, "ok");
+        } catch (YpyException $e) {
+            return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
+        } catch (Exception $e) {
+            Log::write($this->controllerName.'|'.$this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
+        }
+    }
+
+    public function rechargeListAction(){
+        try {
+            $page = (int)$this->get('page');
+            $list = (new UserLogic())->getRechargeList($this->uid, $page);
+            return $this->ajaxReturn(ErrorCode::SUCCESS, "ok", $list);
+        } catch (YpyException $e) {
+            return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
+        } catch (Exception $e) {
+            Log::write($this->controllerName.'|'.$this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
+        }
+    }
 }

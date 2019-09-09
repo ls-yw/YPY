@@ -60,7 +60,7 @@ class BasicController extends Controller
     {
         if (Redis::getInstance()->exists($this->token)) {
             $user = Helper::jsonDecode(Redis::getInstance()->get($this->token));
-            $this->uid = $user['id'];
+            $this->uid = (int)$user['id'];
             $this->user = $user;
         }
     }

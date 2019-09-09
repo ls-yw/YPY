@@ -101,12 +101,13 @@ abstract class BasicModel extends Model
                     $childWhere  = [];
                     $childParams = [];
                     foreach ($value as $k => $v) {
-                        if ($k == 0) continue;
+                        if ($k === 0) continue;
                         $tmp_Where    = $this->dealWhere([$k => $v]);
                         $childWhere[] = $tmp_Where['where'];
                         $childParams  = empty($childParams) ? $tmp_Where['params'] : array_merge($childParams, $tmp_Where['params']);
                     }
                     $fields[] = ' (' . implode(') OR (', $childWhere) . ') ';
+
                     $val      = array_merge($val, $childParams);
                 } elseif ($value['0'] == '_sql') {
                     $fields[] = $value[1];
@@ -141,8 +142,9 @@ abstract class BasicModel extends Model
     /**
      * 处理需要查询的字段
      *
-     * @param string|array $fiedls
-     * @create_time 2017年11月17日
+     * @author yls
+     * @param string|array $fields
+     * @return string
      */
     private function dealFields($fields = '') : string
     {
@@ -157,7 +159,9 @@ abstract class BasicModel extends Model
     /**
      * 处理新增数据
      *
-     * @param int $data
+     * @author yls
+     * @param array $data
+     * @return array
      */
     private function dealInsertData(array $data) : array
     {
@@ -174,8 +178,9 @@ abstract class BasicModel extends Model
     /**
      * 处理更新数据
      *
+     * @author yls
      * @param array $data
-     * @create_time 2017年11月14日
+     * @return array
      */
     private function dealUpdateData(array $data) : array
     {
@@ -196,9 +201,9 @@ abstract class BasicModel extends Model
     /**
      * 添加数据
      *
-     * @param $data
-     * @return bool|\Lib\Extend\Database\bool
-     * @throws \Exception
+     * @author yls
+     * @param array $data
+     * @return int|bool
      */
     public function insertData(array $data)
     {
@@ -215,10 +220,10 @@ abstract class BasicModel extends Model
     /**
      * 更新数据
      *
-     * @param $data
-     * @param $where
-     * @return bool|\Lib\Extend\Database\bool
-     * @throws \Exception
+     * @author yls
+     * @param array $data
+     * @param       $where
+     * @return int|bool
      */
     public function updateData(array $data, $where)
     {
@@ -248,9 +253,9 @@ abstract class BasicModel extends Model
     /**
      * 物理删除数据
      *
-     * @param $where
-     * @return bool|\Lib\Extend\Database\bool
-     * @throws \Exception
+     * @author yls
+     * @param array $where
+     * @return int|bool
      */
     public function delData(array $where)
     {
@@ -308,13 +313,32 @@ abstract class BasicModel extends Model
     }
 
     /**
+     * 获取所有数据
+     *
+     * @author yls
+     * @param        $where
+     * @param null   $fields
+     * @param string $orderBy
+     * @return array|bool
+     */
+    public function getAll($where, $fields = NULL, $orderBy = NULL)
+    {
+        $whereSql = $this->dealWhere($where);
+        $fields   = $this->dealFields($fields);
+        if (!empty($orderBy)) $orderBy = 'order by ' . $orderBy;
+
+        $sql = "select {$fields} from {$this->_targetTable} where " . $whereSql['where'] . " {$orderBy}";
+        return $this->getRows($sql, $whereSql['params']);
+    }
+
+    /**
      * 获取多条数据
      *
      * @param string $sql
      * @param array  $params
      * @return array|bool
      */
-    private function getRows($sql, $params = [])
+    public function getRows($sql, $params = [])
     {
         try {
             $rows = $this->readData($sql, $params);
@@ -331,14 +355,54 @@ abstract class BasicModel extends Model
 
     /**
      * 获取总条数
-     * @param $where
-     * @return int
+     *
+     * @author yls
+     * @param       $where
+     * @param array $fields
+     * @return array|int
      */
-    public function getCount($where) : int
+    public function getCount($where, array $fields = [])
     {
-        $row = $this->getOne($where, 'count(*) as count');
+        if (!empty($fields)) {
+            $fieldStr = [];
+            foreach ($fields as $val) {
+                $tmp = explode(' ', $val);
+                if (2 === count($tmp)) {
+                    $fieldStr[] = "count({$tmp[0]} `{$tmp[1]}`) as {$tmp[1]}_num";
+                } else {
+                    $fieldStr[] = "count(`{$val}`) as {$val}_num";
+                }
+                $fieldStr = implode(',', $fieldStr);
+            }
+        } else {
+            $fieldStr = 'count(*) as count_num';
+        }
+        $row = $this->getOne($where, $fieldStr);
         if (empty($row)) return 0;
-        return (int) $row['count'];
+        return empty($fields) ? (int) $row['count_num'] : $row;
+    }
+
+    /**
+     * 获取和
+     *
+     * @author yls
+     * @param       $where
+     * @param array $fields
+     * @return array
+     */
+    public function getSum($where, array $fields) : array
+    {
+        $fieldStr = [];
+        foreach ($fields as $val) {
+            $tmp = explode(' ', $val);
+            if (count($tmp) > 1) {
+                $fieldStr[] = "sum({$tmp[0]}) as {$tmp[1]}_sum";
+            } else {
+                $fieldStr[] = "sum(`{$val}`) as {$val}_sum";
+            }
+        }
+        $row = $this->getOne($where, implode(',', $fieldStr));
+        return $row;
     }
 
     /**

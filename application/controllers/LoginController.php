@@ -5,6 +5,7 @@ use Basic\BasicController;
 use library\ErrorCode;
 use library\Helper;
 use library\Log;
+use library\Redis;
 use library\YpyException;
 use logic\UserLogic;
 
@@ -27,6 +28,21 @@ class LoginController extends BasicController
             $res = (new UserLogic())->login($mobile, $password);
 
             return self::ajaxReturn(ErrorCode::SUCCESS, "登录成功", ['token' => $res]);
+        } catch (YpyException $e) {
+            return self::ajaxReturn(ErrorCode::FAIL, $e->getMessage());
+        } catch (\Exception $e) {
+            Log::write($this->controllerName.'|'.$this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            return self::ajaxReturn(ErrorCode::FAIL, "系统错误");
+        }
+    }
+
+    public function logoutAction()
+    {
+        try {
+
+            Redis::getInstance()->del($this->token);
+
+            return self::ajaxReturn(ErrorCode::SUCCESS, "退出成功");
         } catch (YpyException $e) {
             return self::ajaxReturn(ErrorCode::FAIL, $e->getMessage());
         } catch (\Exception $e) {
