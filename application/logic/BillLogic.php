@@ -7,6 +7,8 @@ use library\YpyException;
 use models\Expense;
 use models\ExpenseImg;
 use models\User;
+use models\UserBalance;
+use models\UserBalanceFlow;
 
 class BillLogic extends BasicLogic
 {
@@ -113,18 +115,29 @@ class BillLogic extends BasicLogic
     public function changeExpenseStatus(int $uid, int $id, int $status)
     {
         $expense = (new Expense())->getById($id);
-        if($uid != $expense['uid'] && $uid != $expense['to_uid']){
+        if ($uid != $expense['uid'] && $uid != $expense['to_uid']) {
             throw new YpyException('无权限更改');
         }
 
         //是否有权限更改该状态
         $r = $this->checkPowerChangeExpense($uid, $expense, $status);
-        if(!$r){
+        if (!$r) {
             throw new YpyException('无权限更改');
         }
 
+        if (3 === $status && 'expense' === $expense['at_type']) { // 扣款
+            $userBalance = (new UserBalance())->getOne(['uid' => $expense['to_uid'], 'to_uid' => $expense['uid']]);
+            if (($expense['price'] * 100) > (int) $userBalance['balance']) {
+                throw new YpyException('余额不足');
+            }
+            $balance = $userBalance['balance'] - ($expense['price'] * 100);
+            (new UserBalance())->updateData(['balance' => $balance], ['id' => $userBalance['id']]);
+            (new UserBalanceFlow())->insertData(['uid' => $expense['to_uid'], 'to_uid' => $expense['uid'], 'type' => 2, 'amount' => ($expense['price'] * 100), 'balance' => $balance]);
+            $status = 4;
+        }
+
         $update = ['at_status' => $status];
-        if((new Expense())->updateData($update, ['id' => $id])){
+        if ((new Expense())->updateData($update, ['id' => $id])) {
             return true;
         }
         throw new YpyException('更改失败');
@@ -141,22 +154,22 @@ class BillLogic extends BasicLogic
      */
     public function checkPowerChangeExpense($uid, $expense, $status)
     {
-        if($uid == $expense['uid']){  //报销者
+        if ($uid == $expense['uid']) {  //报销者
 
-            if($expense['at_type'] == 'income'){
-                if($expense['at_status'] == 2 && in_array($status, [3,5]))return true;
-                if($expense['at_status'] == 3 && in_array($status, [5]))return true;
-            }else{
-                if($expense['at_status'] == 1 && in_array($status, [5]))return true;
-                if($expense['at_status'] == 2 && in_array($status, [5]))return true;
-                if($expense['at_status'] == 3 && in_array($status, [4, 2]))return true;
+            if ($expense['at_type'] == 'income') {
+                if ($expense['at_status'] == 2 && in_array($status, [3, 5])) return true;
+                if ($expense['at_status'] == 3 && in_array($status, [5])) return true;
+            } else {
+                if ($expense['at_status'] == 1 && in_array($status, [5])) return true;
+                if ($expense['at_status'] == 2 && in_array($status, [5])) return true;
+                if ($expense['at_status'] == 3 && in_array($status, [4, 2])) return true;
             }
-        }else{  //财务大人
-            if($expense['at_type'] == 'income'){
-                if($expense['at_status'] == 3 && in_array($status, [4, 2]))return true;
-            }else{
-                if($expense['at_status'] == 1 && in_array($status, [2,6]))return true;
-                if($expense['at_status'] == 2 && in_array($status, [3,6]))return true;
+        } else {  //财务大人
+            if ($expense['at_type'] == 'income') {
+                if ($expense['at_status'] == 3 && in_array($status, [4, 2])) return true;
+            } else {
+                if ($expense['at_status'] == 1 && in_array($status, [2, 6])) return true;
+                if ($expense['at_status'] == 2 && in_array($status, [3, 6])) return true;
             }
         }
         return false;
