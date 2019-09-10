@@ -1,4 +1,5 @@
 <?php
+
 namespace Controllers;
 
 use Basic\BasicController;
@@ -20,7 +21,7 @@ class UserController extends BasicController
     {
         try {
             $financer = (new UserLogic())->getFinancer((int) $this->uid);
-            $pairs = [];
+            $pairs    = [];
             if (!empty($financer)) {
                 $users = (new UserLogic())->getPairs();
                 foreach ($financer as $val) {
@@ -31,7 +32,7 @@ class UserController extends BasicController
         } catch (YpyException $e) {
             return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
         } catch (Exception $e) {
-            Log::write($this->controllerName.'|'.$this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            Log::write($this->controllerName . '|' . $this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
             return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
         }
     }
@@ -45,14 +46,14 @@ class UserController extends BasicController
     public function infoAction()
     {
         try {
-            $balance = (new UserLogic())->getBalance((int) $this->uid);
+            $balance         = (new UserLogic())->getBalance((int) $this->uid);
             $user['balance'] = $balance;
 
             return $this->ajaxReturn(ErrorCode::SUCCESS, "ok", $user);
         } catch (YpyException $e) {
             return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
         } catch (Exception $e) {
-            Log::write($this->controllerName.'|'.$this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            Log::write($this->controllerName . '|' . $this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
             return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
         }
     }
@@ -67,7 +68,7 @@ class UserController extends BasicController
     {
         try {
 
-            $amount = (float)$this->post('amount');
+            $amount = (float) $this->post('amount');
             $amount = $amount * 100;
             if (empty($amount)) {
                 throw new YpyException('充值金额不能为0');
@@ -80,20 +81,52 @@ class UserController extends BasicController
         } catch (YpyException $e) {
             return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
         } catch (Exception $e) {
-            Log::write($this->controllerName.'|'.$this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            Log::write($this->controllerName . '|' . $this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
             return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
         }
     }
 
-    public function rechargeListAction(){
+    /**
+     * 充值列表
+     *
+     * @author yls
+     * @return \Phalcon\Http\Response
+     */
+    public function rechargeListAction()
+    {
         try {
-            $page = (int)$this->get('page');
+            $page = (int) $this->get('page');
             $list = (new UserLogic())->getRechargeList($this->uid, $page);
             return $this->ajaxReturn(ErrorCode::SUCCESS, "ok", $list);
         } catch (YpyException $e) {
             return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
         } catch (Exception $e) {
-            Log::write($this->controllerName.'|'.$this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            Log::write($this->controllerName . '|' . $this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
+        }
+    }
+
+    /**
+     * 更改充值记录状态
+     *
+     * @author yls
+     * @return \Phalcon\Http\Response
+     */
+    public function rechargeStatusAction()
+    {
+        try {
+            $id     = (int) $this->post('id');
+            $status = (int) $this->post('status');
+
+            $row   = (new UserLogic())->rechargeStatus($this->uid, $id, $status);
+            if (!$row) {
+                throw new YpyException('变更失败');
+            }
+            return $this->ajaxReturn(ErrorCode::SUCCESS, "状态更改成功");
+        } catch (YpyException $e) {
+            return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
+        } catch (Exception $e) {
+            Log::write($this->controllerName . '|' . $this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
             return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
         }
     }

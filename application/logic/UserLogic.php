@@ -8,6 +8,7 @@ use library\Redis;
 use library\YpyException;
 use models\User;
 use models\UserBalance;
+use models\UserBalanceFlow;
 use models\UserBalanceRecharge;
 use models\UserRelation;
 
@@ -123,8 +124,9 @@ class UserLogic extends BasicLogic
      */
     public function getRechargeList(int $uid, int $page)
     {
-        $offset = ($page - 1) * 10;
-        $list   = (new UserBalanceRecharge())->getList(['uid' => ['or', 'uid' => $uid, 'to_uid' => $uid]], 'id desc', $offset, 10);
+        $limit  = 10;
+        $offset = ($page - 1) * $limit;
+        $list   = (new UserBalanceRecharge())->getList(['uid' => ['or', 'uid' => $uid, 'to_uid' => $uid]], 'id desc', $offset, $limit);
         if (!empty($list)) {
             $users = $this->getPairs();
             foreach ($list as &$val) {
@@ -133,7 +135,43 @@ class UserLogic extends BasicLogic
                 $val['amount']      = Helper::moneyToShow($val['amount']);
             }
         }
-        return $list;
+        $count = (new UserBalanceRecharge())->getCount(['uid' => ['or', 'uid' => $uid, 'to_uid' => $uid]]);
+        return ['list' => $list, 'count' => $count, 'totalPage' => ceil($count / $limit)];
+    }
+
+    /**
+     * 变更充值记录状态
+     *
+     * @author yls
+     * @param int $uid
+     * @param int $id
+     * @param int $status
+     * @return bool|int
+     * @throws YpyException
+     */
+    public function rechargeStatus(int $uid, int $id, int $status)
+    {
+        $info = (new UserBalanceRecharge())->getOne(['id' => $id, 'to_uid' => $uid]);
+        if (empty($info)) {
+            throw new YpyException('找不到数据');
+        }
+        $row = (new UserBalanceRecharge())->updateData(['recharge_status' => $status], ['id' => $id]);
+
+        if (2 === $status && $row) {
+            $amount = $info['amount'];
+            $userBalance = (new UserBalance())->getOne(['uid' => $info['uid'], 'to_uid' => $info['to_uid']]);
+            if (empty($userBalance)) {
+                $userBalance = ['uid' => $info['uid'], 'to_uid' => $info['to_uid'], 'balance' => $amount];
+                (new UserBalance())->insertData($userBalance);
+            } else {
+                $userBalance['balance'] += $amount;
+                (new UserBalance())->updateData(['balance' => $userBalance['balance']], ['uid' => $info['uid'], 'to_uid' => $info['to_uid']]);
+            }
+
+            (new UserBalanceFlow())->insertData(['uid' => $info['uid'], 'to_uid' => $info['to_uid'], 'type' => 1, 'amount'=>$amount, 'balance' => $userBalance['balance']]);
+        }
+
+        return $row;
     }
 
 }

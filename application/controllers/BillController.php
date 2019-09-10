@@ -126,6 +126,12 @@ class BillController extends BasicController
         }
     }
 
+    /**
+     * 变更状态
+     *
+     * @author yls
+     * @return \Phalcon\Http\Response
+     */
     public function changeAction()
     {
         try {
