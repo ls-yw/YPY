@@ -36,7 +36,7 @@ class UserLogic extends BasicLogic
         }
 
         $token = sha1($user['id']);
-        Redis::getInstance()->setex($token, 86400, Helper::jsonEncode($user));
+        Redis::getInstance()->setex($token, 86400 * 30, Helper::jsonEncode($user));
 
         return $token;
     }
