@@ -152,4 +152,20 @@ class BillController extends BasicController
             return self::ajaxReturn(ErrorCode::FAIL, "系统错误");
         }
     }
+
+    public function categoryAction()
+    {
+        try {
+            $type     = $this->get('type');
+
+            $info = (new BillLogic())->getCategory($type);
+
+            return self::ajaxReturn(ErrorCode::SUCCESS, "更改成功", $info);
+        } catch (YpyException $e) {
+            return self::ajaxReturn(ErrorCode::FAIL, $e->getMessage());
+        } catch (\Exception $e) {
+            Log::write($this->controllerName . '|' . $this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            return self::ajaxReturn(ErrorCode::FAIL, "系统错误");
+        }
+    }
 }

@@ -4,6 +4,7 @@ namespace logic;
 
 use Basic\BasicLogic;
 use library\YpyException;
+use models\Category;
 use models\Expense;
 use models\ExpenseImg;
 use models\User;
@@ -173,5 +174,18 @@ class BillLogic extends BasicLogic
             }
         }
         return false;
+    }
+
+    /**
+     * 获取分类
+     *
+     * @author yls
+     * @param int $type
+     * @return array|bool
+     */
+    public function getCategory(int $type)
+    {
+        $category = (new Category())->getList(['type' => $type]);
+        return $category;
     }
 }
