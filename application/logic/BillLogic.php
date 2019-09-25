@@ -167,6 +167,7 @@ class BillLogic extends BasicLogic
             }
         } else {  //财务大人
             if ($expense['at_type'] == 'income') {
+                if ($expense['at_status'] == 1 && in_array($status, [2, 6])) return true;
                 if ($expense['at_status'] == 3 && in_array($status, [4, 2])) return true;
             } else {
                 if ($expense['at_status'] == 1 && in_array($status, [2, 6])) return true;
