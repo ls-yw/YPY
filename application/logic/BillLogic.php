@@ -36,7 +36,7 @@ class BillLogic extends BasicLogic
             if (empty($row)) {
                 return false;
             }
-            (new ExpenseImg())->delData(['id' => $id]);
+            (new ExpenseImg())->delData(['expense_id' => $id]);
         }
         if (!empty($imgs)) {
             foreach ($imgs as $img) {
@@ -99,6 +99,7 @@ class BillLogic extends BasicLogic
         $users               = (new UserLogic())->getPairs();
         $info['to_realname'] = $users[$info['to_uid']] ?? '';
         $info['imgs']        = (new ExpenseImg())->getList(['deleted' => 0, 'expense_id' => $info['id']]);
+        $info['cate_name'] = $this->getCategoryPairs(1)[$info['cate_id']] ?? '其他';
         return $info;
     }
 
@@ -188,5 +189,25 @@ class BillLogic extends BasicLogic
     {
         $category = (new Category())->getList(['type' => $type]);
         return $category;
+    }
+
+    /**
+     * 获取分类数组
+     *
+     * @author yls
+     * @param int $type
+     * @return array|bool
+     */
+    public function getCategoryPairs(int $type)
+    {
+        $category = (new Category())->getList(['type' => $type]);
+        $arr = [];
+        if (!empty($category)) {
+            foreach ($category as $val) {
+                $arr[$val['id']] = $val['name'];
+            }
+            $arr[99] = '其他';
+        }
+        return $arr;
     }
 }
