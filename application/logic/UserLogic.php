@@ -133,6 +133,7 @@ class UserLogic extends BasicLogic
                 $val['uid_name']    = $users[$val['uid']] ?? '';
                 $val['to_uid_name'] = $users[$val['to_uid']] ?? '';
                 $val['amount']      = Helper::moneyToShow($val['amount']);
+                $val['hand']        = (1 === (int) $val['recharge_status'] && (int) $val['to_uid'] === $uid) ? 1 : 0;
             }
         }
         $count = (new UserBalanceRecharge())->getCount(['uid' => ['or', 'uid' => $uid, 'to_uid' => $uid]]);
@@ -158,7 +159,7 @@ class UserLogic extends BasicLogic
         $row = (new UserBalanceRecharge())->updateData(['recharge_status' => $status], ['id' => $id]);
 
         if (2 === $status && $row) {
-            $amount = $info['amount'];
+            $amount      = $info['amount'];
             $userBalance = (new UserBalance())->getOne(['uid' => $info['uid'], 'to_uid' => $info['to_uid']]);
             if (empty($userBalance)) {
                 $userBalance = ['uid' => $info['uid'], 'to_uid' => $info['to_uid'], 'balance' => $amount];
@@ -168,10 +169,37 @@ class UserLogic extends BasicLogic
                 (new UserBalance())->updateData(['balance' => $userBalance['balance']], ['uid' => $info['uid'], 'to_uid' => $info['to_uid']]);
             }
 
-            (new UserBalanceFlow())->insertData(['uid' => $info['uid'], 'to_uid' => $info['to_uid'], 'type' => 1, 'amount'=>$amount, 'balance' => $userBalance['balance']]);
+            (new UserBalanceFlow())->insertData(['uid' => $info['uid'], 'to_uid' => $info['to_uid'], 'type' => 1, 'amount' => $amount, 'balance' => $userBalance['balance']]);
         }
 
         return $row;
+    }
+
+    /**
+     * 流水
+     *
+     * @author yls
+     * @param int $uid
+     * @param int $page
+     * @param int $row
+     * @return array
+     * @throws \Exception
+     */
+    public function getRechargeFlow(int $uid, int $page, int $row)
+    {
+        $offset = ($page - 1) * $row;
+        $list   = (new UserBalanceFlow())->getList(['uid' => $uid], 'id desc', $offset, $row);
+        if (!empty($list)) {
+            $users = $this->getPairs();
+            foreach ($list as &$val) {
+                $val['uid_name']    = $users[$val['uid']] ?? '';
+                $val['to_uid_name'] = $users[$val['to_uid']] ?? '';
+                $val['amount']      = Helper::moneyToShow($val['amount']);
+                $val['balance']     = Helper::moneyToShow($val['balance']);
+            }
+        }
+        $count = (new UserBalanceFlow())->getCount(['uid' => $uid]);
+        return ['list' => $list, 'count' => $count, 'totalPage' => ceil($count / $row)];
     }
 
 }

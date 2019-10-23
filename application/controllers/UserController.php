@@ -48,6 +48,7 @@ class UserController extends BasicController
         try {
             $balance         = (new UserLogic())->getBalance((int) $this->uid);
             $user['balance'] = $balance;
+            $user['realname'] = $this->user['realname'];
 
             return $this->ajaxReturn(ErrorCode::SUCCESS, "ok", $user);
         } catch (YpyException $e) {
@@ -123,6 +124,27 @@ class UserController extends BasicController
                 throw new YpyException('变更失败');
             }
             return $this->ajaxReturn(ErrorCode::SUCCESS, "状态更改成功");
+        } catch (YpyException $e) {
+            return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
+        } catch (Exception $e) {
+            Log::write($this->controllerName . '|' . $this->actionName, $e->getMessage() . $e->getFile() . $e->getLine(), 'error');
+            return $this->ajaxReturn(ErrorCode::FAIL, "系统错误");
+        }
+    }
+
+    /**
+     * 流水
+     *
+     * @author yls
+     * @return \Phalcon\Http\Response
+     */
+    public function flowAction()
+    {
+        try {
+            $page = (int) $this->get('page', 'int', 1);
+            $size = (int) $this->get('size', 'int', 5);
+            $list = (new UserLogic())->getRechargeFlow($this->uid, $page, $size);
+            return $this->ajaxReturn(ErrorCode::SUCCESS, "ok", $list);
         } catch (YpyException $e) {
             return $this->ajaxReturn(ErrorCode::FAIL, $e->getMessage());
         } catch (Exception $e) {
